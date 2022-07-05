@@ -3,7 +3,11 @@ import {
   StormGlassForecastResponse,
   StormGlassPoint,
 } from '@src/clients/stormGlass-interface';
-import { AxiosStatic } from 'axios';
+import { AxiosError, AxiosStatic } from 'axios';
+import {
+  ClientRequestError,
+  StormGlassResponseError,
+} from '@src/clients/stormGlass-error';
 
 export class StormGlass {
   readonly stormGlassAPIParams =
@@ -15,15 +19,35 @@ export class StormGlass {
     latitude: number,
     longitude: number
   ): Promise<ForecastPoint[]> {
-    const response = await this.request.get<StormGlassForecastResponse>(
-      `https://api.stormglass.io/v2/weather/point?lat=${latitude}&lng=${longitude}&params=${this.stormGlassAPIParams}&source=${this.stormGlassAPISource}`,
-      {
-        headers: {
-          Authorization: 'fake-token'
+    try {
+      const response = await this.request.get<StormGlassForecastResponse>(
+        `https://api.stormglass.io/v2/weather/point?lat=${latitude}&lng=${longitude}&params=${this.stormGlassAPIParams}&source=${this.stormGlassAPISource}`,
+        {
+          headers: {
+            Authorization: 'fake-token',
+          },
         }
+      );
+      return this.normalizeResponse(response.data);
+    } catch (err) {
+      /**
+       * This is handling the Axios errors specifically
+       */
+      const axiosError = err as AxiosError;
+      if (
+        axiosError instanceof Error &&
+        axiosError.response &&
+        axiosError.response.status
+      ) {
+        throw new StormGlassResponseError(
+          `Error: ${JSON.stringify(axiosError.response.data)} Code: ${
+            axiosError.response.status
+          }`
+        );
       }
-    );
-    return this.normalizeResponse(response.data);
+      // The type is temporary given we will rework it in the upcoming chapters
+      throw new ClientRequestError((err as { message: any }).message);
+    }
   }
 
   private normalizeResponse(
