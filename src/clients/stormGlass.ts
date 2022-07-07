@@ -1,6 +1,13 @@
-import { ClientRequestError, StormGlassResponseError } from '@src/clients/stormGlass-error';
-import { ForecastPoint, StormGlassForecastResponse, StormGlassPoint } from '@src/clients/stormGlass-interface';
-import { AxiosError, AxiosStatic } from 'axios';
+import {
+  ClientRequestError,
+  StormGlassResponseError,
+} from '@src/clients/stormGlass-error';
+import {
+  ForecastPoint,
+  StormGlassForecastResponse,
+  StormGlassPoint,
+} from '@src/clients/stormGlass-interface';
+import * as HttpUtil from '@src/util/request/request';
 import config, { IConfig } from 'config';
 
 const stormGlassConfig: IConfig = config.get('App.resources.StormGlass');
@@ -10,14 +17,18 @@ export class StormGlass {
     'swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed';
   readonly stormGlassAPISource = 'noaa';
 
-  constructor(protected request: AxiosStatic) {}
+  constructor(protected request = new HttpUtil.Request()) {}
   public async fetchPoints(
     latitude: number,
     longitude: number
   ): Promise<ForecastPoint[]> {
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
-        `${stormGlassConfig.get('apiUrl')}/weather/point?lat=${latitude}&lng=${longitude}&params=${this.stormGlassAPIParams}&source=${this.stormGlassAPISource}`,
+        `${stormGlassConfig.get(
+          'apiUrl'
+        )}/weather/point?lat=${latitude}&lng=${longitude}&params=${
+          this.stormGlassAPIParams
+        }&source=${this.stormGlassAPISource}`,
         {
           headers: {
             Authorization: `${stormGlassConfig.get('apiToken')}`,
@@ -26,23 +37,13 @@ export class StormGlass {
       );
       return this.normalizeResponse(response.data);
     } catch (err) {
-      /**
-       * This is handling the Axios errors specifically
-       */
-      const axiosError = err as AxiosError;
-      if (
-        axiosError instanceof Error &&
-        axiosError.response &&
-        axiosError.response.status
-      ) {
+      if (err instanceof Error && HttpUtil.Request.isRequestError(err)) {
+        const error = HttpUtil.Request.extractErrorData(err);
         throw new StormGlassResponseError(
-          `Error: ${JSON.stringify(axiosError.response.data)} Code: ${
-            axiosError.response.status
-          }`
+          `Error: ${JSON.stringify(error.data)} Code: ${error.status}`
         );
       }
-      // The type is temporary given we will rework it in the upcoming chapters
-      throw new ClientRequestError((err as { message: any }).message);
+      throw new ClientRequestError(JSON.stringify(err));
     }
   }
 
