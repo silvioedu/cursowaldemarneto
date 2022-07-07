@@ -7,16 +7,15 @@ import stormGlassWeather3HoursFixture from '@test/fixtures/stormglass_weather_3_
 jest.mock('@src/util/request/request');
 
 describe('StormGlass client', () => {
-
   /**
- * Used for static method's mocks
-  */
+   * Used for static method's mocks
+   */
   const MockedRequestClass = Request as jest.Mocked<typeof Request>;
   /**
-  * Used for instance method's mocks
-  */ 
+   * Used for instance method's mocks
+   */
   const mockedRequest = new Request() as jest.Mocked<Request>;
-  
+
   it('should return the normalized forecast format the StormGlass service', async () => {
     const lat = -33.792726;
     const lng = 151.289824;
