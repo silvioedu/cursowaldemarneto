@@ -1,13 +1,9 @@
-import {
-  ForecastPoint,
-  StormGlassForecastResponse,
-  StormGlassPoint,
-} from '@src/clients/stormGlass-interface';
+import { ClientRequestError, StormGlassResponseError } from '@src/clients/stormGlass-error';
+import { ForecastPoint, StormGlassForecastResponse, StormGlassPoint } from '@src/clients/stormGlass-interface';
 import { AxiosError, AxiosStatic } from 'axios';
-import {
-  ClientRequestError,
-  StormGlassResponseError,
-} from '@src/clients/stormGlass-error';
+import config, { IConfig } from 'config';
+
+const stormGlassConfig: IConfig = config.get('App.resources.StormGlass');
 
 export class StormGlass {
   readonly stormGlassAPIParams =
@@ -21,10 +17,10 @@ export class StormGlass {
   ): Promise<ForecastPoint[]> {
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
-        `https://api.stormglass.io/v2/weather/point?lat=${latitude}&lng=${longitude}&params=${this.stormGlassAPIParams}&source=${this.stormGlassAPISource}`,
+        `${stormGlassConfig.get('apiUrl')}/weather/point?lat=${latitude}&lng=${longitude}&params=${this.stormGlassAPIParams}&source=${this.stormGlassAPISource}`,
         {
           headers: {
-            Authorization: 'fake-token',
+            Authorization: `${stormGlassConfig.get('apiToken')}`,
           },
         }
       );
