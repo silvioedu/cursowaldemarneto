@@ -1,0 +1,15 @@
+@startuml Forecast request flow
+title Forecast request flow
+actor WebApp
+WebApp -> ForecastController: GET to /forecast
+ForecastController -> BeachModel: Get all beaches created by the user
+ForecastController <-- BeachModel: return beaches list
+ForecastController -> ForecastService: Get forecast for all the user's beaches
+ForecastService -> StormGlassClient: Fetch points for latitude and longitude
+StormGlassClient -> StormGlassAPI: Fetch points for latitude and longitude
+StormGlassClient <-- StormGlassAPI: return points
+ForecastService <-- StormGlassClient: return normalized points
+ForecastService -> RatingService: Calculate rating
+ForecastService <-- RatingService: return rating
+ForecastController <-- ForecastService: return forecast for user's beaches
+WebApp <-- ForecastController: return forecast
