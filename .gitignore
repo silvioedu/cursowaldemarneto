@@ -125,3 +125,6 @@ typings/
 
 # typescript compiled code
 dist/
+
+# coverage dir
+coverage-ts/

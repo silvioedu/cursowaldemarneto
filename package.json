@@ -13,7 +13,8 @@
     "style:fix": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
     "test": "npm run test:unit && npm run test:functional",
     "test:functional": "jest --projects ./test --runInBand",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "ts-coverage": "typescript-coverage-report --ignore-files 'test/**/*'"
   },
   "repository": {
     "type": "git",
@@ -45,7 +46,8 @@
     "supertest": "^6.2.4",
     "ts-jest": "^28.0.5",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "typescript-coverage-report": "^0.6.4"
   },
   "dependencies": {
     "@overnightjs/core": "^1.7.6",
@@ -54,5 +56,8 @@
     "config": "^3.3.7",
     "express": "^4.18.1",
     "module-alias": "^2.2.2"
+  },
+  "typeCoverage": {
+    "atLeast": 90
   }
 }
