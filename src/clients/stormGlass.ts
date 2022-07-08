@@ -18,15 +18,12 @@ export class StormGlass {
   readonly stormGlassAPISource = 'noaa';
 
   constructor(protected request = new HttpUtil.Request()) {}
-  public async fetchPoints(
-    latitude: number,
-    longitude: number
-  ): Promise<ForecastPoint[]> {
+  public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
         `${stormGlassConfig.get(
           'apiUrl'
-        )}/weather/point?lat=${latitude}&lng=${longitude}&params=${
+        )}/weather/point?lat=${lat}&lng=${lng}&params=${
           this.stormGlassAPIParams
         }&source=${this.stormGlassAPISource}`,
         {
