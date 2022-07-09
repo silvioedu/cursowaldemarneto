@@ -1,4 +1,5 @@
-import { Beach } from "@src/model/beach";
+import { Beach } from '@src/model/beach';
+import { SetupServer } from '@src/server';
 
 describe('Beaches functional tests', () => {
   beforeAll(async () => await Beach.deleteMany({}));
@@ -33,9 +34,23 @@ describe('Beaches functional tests', () => {
       });
     });
 
-    it.skip('should return 500 when there is any error other than validation error', async () => {
-      //TODO think in a way to throw a 500
-    });
+    it('should return 500 when there is any error other than validation error', async () => {
+      const newBeach = {
+        lat: -33.792726,
+        lng: 151.289824,
+        name: 'Manly',
+        position: 'E',
+      };
 
+      const server = new SetupServer();
+      server.close();
+
+      const response = await global.testRequest.post('/beaches').send(newBeach);
+
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        error: 'Internal Server Error',
+      });
+    });
   });
 });
