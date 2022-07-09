@@ -1,11 +1,8 @@
 import { StormGlass } from '@src/clients/stormGlass';
 import { ForecastPoint } from '@src/clients/stormGlass-interface';
+import { Beach } from '@src/model/beach';
 import { ForecastProcessingInternalError } from '@src/services/forecast-error';
-import {
-  Beach,
-  BeachForecast,
-  TimeForecast,
-} from '@src/services/forecast-interface';
+import { BeachForecast, TimeForecast } from '@src/services/forecast-interface';
 
 export class Forecast {
   constructor(protected stormGlass = new StormGlass()) {}

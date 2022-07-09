@@ -1,18 +1,32 @@
-import { ForecastController } from './controller/forecast';
 import './util/module-alias';
 
 import { Server } from '@overnightjs/core';
+import { close as dbClose, connect as dbConnect } from '@src/database';
 import bodyParser from 'body-parser';
 import { Application } from 'express';
+
+import { ForecastController } from '@src/controller/forecast';
+import { BeachController } from '@src/controller/beach';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
     super();
   }
 
-  public init(): void {
+  public async init(): Promise<void> {
     this.setupExpress();
     this.setupControllers();
+    await this.setupDatabase();
+  }
+
+  public start(): void {
+    this.app.listen(this.port, () => {
+      console.info('Server listening on port:', this.port);
+    })
+  }
+
+  public async close(): Promise<void> {
+    await dbClose();
   }
 
   public getApp(): Application {
@@ -21,10 +35,18 @@ export class SetupServer extends Server {
 
   private setupExpress(): void {
     this.app.use(bodyParser.json());
+    console.info('Express configuration OK');
   }
 
   private setupControllers(): void {
     const forecastController = new ForecastController();
-    this.addControllers([forecastController]);
+    const beachController = new BeachController();
+    this.addControllers([forecastController, beachController]);
+    console.info('Controllers OK');
+  }
+
+  private async setupDatabase(): Promise<void> {
+    await dbConnect();
+    console.info('Database OK');
   }
 }
