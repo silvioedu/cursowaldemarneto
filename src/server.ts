@@ -19,6 +19,12 @@ export class SetupServer extends Server {
     await this.setupDatabase();
   }
 
+  public start(): void {
+    this.app.listen(this.port, () => {
+      console.info('Server listening on port:', this.port);
+    })
+  }
+
   public async close(): Promise<void> {
     await dbClose();
   }
@@ -29,15 +35,18 @@ export class SetupServer extends Server {
 
   private setupExpress(): void {
     this.app.use(bodyParser.json());
+    console.info('Express configuration OK');
   }
 
   private setupControllers(): void {
     const forecastController = new ForecastController();
     const beachController = new BeachController();
     this.addControllers([forecastController, beachController]);
+    console.info('Controllers OK');
   }
 
   private async setupDatabase(): Promise<void> {
     await dbConnect();
+    console.info('Database OK');
   }
 }
