@@ -35,7 +35,7 @@ export class SetupServer extends Server {
 
   private setupExpress(): void {
     this.app.use(bodyParser.json());
-    console.info('Express configuration OK');
+    // console.info('Express configuration OK');
   }
 
   private setupControllers(): void {
@@ -44,11 +44,11 @@ export class SetupServer extends Server {
     const userController = new UserController();
 
     this.addControllers([forecastController, beachController, userController]);
-    console.info('Controllers OK');
+    // console.info('Controllers OK');
   }
 
   private async setupDatabase(): Promise<void> {
     await dbConnect();
-    console.info('Database OK');
+    // console.info('Database OK');
   }
 }
