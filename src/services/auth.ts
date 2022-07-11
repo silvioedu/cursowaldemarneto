@@ -1,3 +1,4 @@
+import { DecodedUser } from '@src/services/auth-interface';
 import bcrypt from 'bcrypt';
 import config from 'config';
 import jwt from 'jsonwebtoken';
@@ -21,5 +22,9 @@ export default class AuthService {
     return jwt.sign(payload, config.get('App.auth.key'), {
       expiresIn: config.get('App.auth.tokenExpiresIn'),
     });
+  }
+
+  public static decodeToken(token: string): DecodedUser {
+    return jwt.verify(token, config.get('App.auth.key')) as DecodedUser;
   }
 }
