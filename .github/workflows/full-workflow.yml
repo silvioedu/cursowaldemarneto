@@ -49,3 +49,11 @@ jobs:
         env:
           MONGODB_URL: mongodb://localhost:${{ job.services.mongodb.ports[27017] }}/surf-forecast-test
         run: yarn test
+
+      - name: Deploy application
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "silvio-surf-forecast"
+          heroku_email: "silvioedu@gmail.com"
