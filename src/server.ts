@@ -7,6 +7,7 @@ import { UserController } from '@src/controller/user';
 import { close as dbClose, connect as dbConnect } from '@src/database';
 import bodyParser from 'body-parser';
 import { Application } from 'express';
+import logger from '@src/logger';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -21,7 +22,7 @@ export class SetupServer extends Server {
 
   public start(): void {
     this.app.listen(this.port, () => {
-      console.info('Server listening on port:', this.port);
+      logger.info(`Server listening on port: ${this.port}`);
     });
   }
 
