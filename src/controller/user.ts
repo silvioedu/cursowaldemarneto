@@ -1,5 +1,6 @@
 import { Controller, Post } from '@overnightjs/core';
 import { BaseController } from '@src/controller/base';
+import logger from '@src/logger';
 import { User } from '@src/model/user';
 import AuthService from '@src/services/auth';
 import { Request, Response } from 'express';
@@ -13,6 +14,7 @@ export class UserController extends BaseController {
       const result = await user.save();
       res.status(201).send(result);
     } catch (error) {
+      logger.error(error);
       this.sendCreateUpdateErrorResponse(res, error);
     }
   }
