@@ -8,6 +8,8 @@ import { close as dbClose, connect as dbConnect } from '@src/database';
 import logger from '@src/logger';
 import bodyParser from 'body-parser';
 import { Application } from 'express';
+import expressPino from 'express-pino-logger';
+import cors from 'cors';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -37,6 +39,16 @@ export class SetupServer extends Server {
   private setupExpress(): void {
     logger.info('Preparing Express');
     this.app.use(bodyParser.json());
+    this.app.use(
+      expressPino({
+        logger,
+      })
+    );
+    this.app.use(
+      cors({
+        origin: '*',
+      })
+    );
     logger.info('Express configuration OK');
   }
 
