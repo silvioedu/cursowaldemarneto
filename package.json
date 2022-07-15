@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/src/index.js",
-    "start:dev": "ts-node-dev 'src/index.ts'",
+    "start:dev": "ts-node-dev --files 'src/index.ts' | pino-pretty -c",
     "lint": "eslint ./src ./test --ext .ts",
     "lint:fix": "eslint ./src ./test --ext .ts --fix",
     "style:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'",
@@ -16,7 +16,9 @@
     "test:unit": "jest",
     "ts-coverage": "typescript-coverage-report --ignore-files 'test/**/*'"
   },
-  "engines": {"node": "14"},
+  "engines": {
+    "node": "14"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/silvioedu/cursowaldemarneto.git"
@@ -35,19 +37,24 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/config": "^0.0.41",
+    "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/express-pino-logger": "^4.0.3",
+    "@types/http-status-codes": "^1.2.0",
     "@types/jest": "^28.1.4",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/module-alias": "^2.0.1",
     "@types/mongoose": "^5.11.97",
     "@types/nock": "^11.1.0",
     "@types/node": "^14.0.0",
+    "@types/pino": "^7.0.5",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
     "eslint": "^8.19.0",
     "jest": "^28.1.2",
     "nock": "^13.2.8",
+    "pino-pretty": "^8.1.0",
     "prettier": "^2.7.1",
     "supertest": "^6.2.4",
     "ts-jest": "^28.0.5",
@@ -61,10 +68,14 @@
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "config": "^3.3.7",
+    "cors": "^2.8.5",
     "express": "^4.18.1",
+    "express-pino-logger": "^7.0.0",
+    "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
-    "mongoose": "^6.4.4"
+    "mongoose": "^6.4.4",
+    "pino": "^8.1.0"
   },
   "typeCoverage": {
     "atLeast": 90
