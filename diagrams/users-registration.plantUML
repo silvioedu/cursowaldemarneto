@@ -1,0 +1,19 @@
+@startuml User registration and authentication flow
+title User registration and authentication flow
+actor User
+User -> Web: Fill out the registration form
+Web -> Api: Creates user
+Web -> Api: Generate token
+Web <-- Api: Returns JWT
+note bottom
+  The Web stores the 
+  token locally and 
+  redirects the user 
+  to the forecast page
+end note
+Web -> Api: Requests the logger user informations from /users/me endpoint
+Web <-- Api: Returns the information for the user
+note bottom
+  The Web stores 
+  information locally
+end note
