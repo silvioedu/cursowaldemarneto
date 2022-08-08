@@ -57,16 +57,16 @@ describe('Beaches functional tests', () => {
     });
 
     it('should return 500 when there is any error other than validation error', async () => {
+      jest
+        .spyOn(Beach.prototype, 'save')
+        .mockImplementationOnce(() => Promise.reject('fail to create beach'));
+
       const newBeach = {
         lat: -33.792726,
         lng: 151.289824,
         name: 'Manly',
         position: 'E',
       };
-
-      const server = new SetupServer();
-      server.close();
-
       const response = await global.testRequest
         .post('/beaches')
         .set({ 'x-access-token': token })
