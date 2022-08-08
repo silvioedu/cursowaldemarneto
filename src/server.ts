@@ -37,6 +37,7 @@ export class SetupServer extends Server {
 
   public async close(): Promise<void> {
     await dbClose();
+    logger.info('Databse closed OK');
   }
 
   public getApp(): Application {
@@ -89,5 +90,6 @@ export class SetupServer extends Server {
 
   private setupErrorHandlers(): void {
     this.app.use(apiErrorValidator);
+    logger.info('Error Handlers OK');
   }
 }
