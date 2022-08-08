@@ -20,9 +20,9 @@ export class Forecast {
     try {
       const beachForecast = await this.calculateRating(beaches);
       const timeForecast = this.mapForecastByTime(beachForecast);
-      return timeForecast.map(t => ({
+      return timeForecast.map((t) => ({
         time: t.time,
-        forecast: _.orderBy(t.forecast, ['rating'], ['desc'])
+        forecast: _.orderBy(t.forecast, ['rating'], ['desc']),
       }));
     } catch (error) {
       logger.error(error);

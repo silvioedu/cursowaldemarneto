@@ -14,6 +14,7 @@ import expressPino from 'express-pino-logger';
 import swaggerUi from 'swagger-ui-express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+import { apiErrorValidator } from '@src/middleware/api-error-validator';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -25,6 +26,7 @@ export class SetupServer extends Server {
     await this.setupDocs();
     this.setupControllers();
     await this.setupDatabase();
+    this.setupErrorHandlers();
   }
 
   public start(): void {
@@ -75,11 +77,17 @@ export class SetupServer extends Server {
 
   private async setupDocs(): Promise<void> {
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(apiSchema));
-    this.app.use(OpenApiValidator.middleware({
-      apiSpec: apiSchema as OpenAPIV3.Document,
-      validateRequests: false,
-      validateResponses: false
-    }));
+    this.app.use(
+      OpenApiValidator.middleware({
+        apiSpec: apiSchema as OpenAPIV3.Document,
+        validateRequests: false,
+        validateResponses: false,
+      })
+    );
     logger.info('Docs OK');
+  }
+
+  private setupErrorHandlers(): void {
+    this.app.use(apiErrorValidator);
   }
 }
