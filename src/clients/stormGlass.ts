@@ -8,6 +8,7 @@ import {
   StormGlassPoint,
 } from '@src/clients/stormGlass-interface';
 import * as HttpUtil from '@src/util/request/request';
+import { TimeUtil } from '@src/util/time';
 import config, { IConfig } from 'config';
 
 const stormGlassConfig: IConfig = config.get('App.resources.StormGlass');
@@ -19,13 +20,14 @@ export class StormGlass {
 
   constructor(protected request = new HttpUtil.Request()) {}
   public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
+    const endTimestamp = TimeUtil.getUnixTimeForAFutureDay(1);
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
         `${stormGlassConfig.get(
           'apiUrl'
         )}/weather/point?lat=${lat}&lng=${lng}&params=${
           this.stormGlassAPIParams
-        }&source=${this.stormGlassAPISource}`,
+        }&source=${this.stormGlassAPISource}&end=${endTimestamp}`,
         {
           headers: {
             Authorization: `${stormGlassConfig.get('apiToken')}`,

@@ -1,15 +1,20 @@
 import './util/module-alias';
 
 import { Server } from '@overnightjs/core';
+import apiSchema from '@src/api.schema.json';
 import { BeachController } from '@src/controller/beach';
 import { ForecastController } from '@src/controller/forecast';
 import { UserController } from '@src/controller/user';
 import { close as dbClose, connect as dbConnect } from '@src/database';
 import logger from '@src/logger';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { Application } from 'express';
 import expressPino from 'express-pino-logger';
-import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import * as OpenApiValidator from 'express-openapi-validator';
+import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+import { apiErrorValidator } from '@src/middleware/api-error-validator';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -18,8 +23,10 @@ export class SetupServer extends Server {
 
   public async init(): Promise<void> {
     this.setupExpress();
+    await this.setupDocs();
     this.setupControllers();
     await this.setupDatabase();
+    this.setupErrorHandlers();
   }
 
   public start(): void {
@@ -66,5 +73,21 @@ export class SetupServer extends Server {
     logger.info('Preparing Database');
     await dbConnect();
     logger.info('Database OK');
+  }
+
+  private async setupDocs(): Promise<void> {
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(apiSchema));
+    this.app.use(
+      OpenApiValidator.middleware({
+        apiSpec: apiSchema as OpenAPIV3.Document,
+        validateRequests: false,
+        validateResponses: false,
+      })
+    );
+    logger.info('Docs OK');
+  }
+
+  private setupErrorHandlers(): void {
+    this.app.use(apiErrorValidator);
   }
 }
